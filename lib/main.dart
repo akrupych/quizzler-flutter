@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/question.dart';
 
 void main() => runApp(Quizzler());
 
@@ -26,12 +27,17 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Widget> icons = [];
-  List<String> questions = [
-    'You can lead a cow down stairs but not up stairs.',
-    'Approximately one quarter of human bones are in the feet.',
-    'A slug\'s blood is green.',
+  List<Question> questions = [
+    Question(
+        text: 'You can lead a cow down stairs but not up stairs.',
+        answer: false),
+    Question(
+        text: 'Approximately one quarter of human bones are in the feet.',
+        answer: true),
+    Question(text: 'A slug\'s blood is green.', answer: true),
   ];
   int currentQuestion = 0;
+  bool done = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +51,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questions[currentQuestion],
+                questions[currentQuestion].text,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -69,15 +75,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                setState(() {
-                  if (currentQuestion < questions.length - 1) {
-                    currentQuestion++;
-                  }
-                  icons.add(Icon(
-                    Icons.check,
-                    color: Colors.green,
-                  ));
-                });
+                answer(true);
               },
             ),
           ),
@@ -95,15 +93,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                setState(() {
-                  if (currentQuestion < questions.length - 1) {
-                    currentQuestion++;
-                  }
-                  icons.add(Icon(
-                    Icons.close,
-                    color: Colors.red,
-                  ));
-                });
+                answer(false);
               },
             ),
           ),
@@ -113,6 +103,22 @@ class _QuizPageState extends State<QuizPage> {
         ),
       ],
     );
+  }
+
+  void answer(bool value) {
+    if (!done) {
+      bool isCorrect = value == questions[currentQuestion].answer;
+      icons.add(Icon(
+        isCorrect ? Icons.check : Icons.close,
+        color: isCorrect ? Colors.green : Colors.red,
+      ));
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+      } else {
+        done = true;
+      }
+      setState(() {});
+    }
   }
 }
 
